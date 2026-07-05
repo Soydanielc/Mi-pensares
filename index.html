@@ -67,15 +67,15 @@
     </div>
 
     <button id="open-sidebar-btn" onclick="toggleSidebar(true)">
-        <i class="fa-solid fa-feather-pointed"></i> Poesías
+        <i class="fa-solid fa-feather-pointed"></i>
     </button>
 
     <div id="sidebar-poemas" class="sidebar">
         <button class="close-btn" onclick="toggleSidebar(false)">&times;</button>
         
         <div class="sidebar-content">
-            <h2 class="title-poesia">Poesía</h2>
-            <p class="desc-poesia">Este apartado será dedicado a cosas que quisiera dedicarte, algunos son originarios de mi persona y otros simplemente los vi bonitos en el internet y pense en ti.</p>
+            <h2 class="title-poesia">Constelación Literaria</h2>
+            <p class="desc-poesia">Este apartado será dedicado a textos que quisiera dedicarte, algunos son originarios de mi persona y otros simplemente los encontre en el internet y pense en ti.</p>
             
             <div id="cards-container" class="cards-grid">
                 <p class="loading-text">Buscando fragmentos en la base de datos...</p>
@@ -89,6 +89,48 @@
             <div class="notebook-paper">
                 <h1 id="notebook-title"></h1>
                 <div id="notebook-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <audio id="bg-music" preload="auto" loop></audio>
+
+    <button id="open-music-btn" onclick="toggleMusicSidebar(true)">
+        <i class="fa-solid fa-satellite-dish"></i>
+    </button>
+
+    <div id="sidebar-musica" class="sidebar">
+        <button class="close-btn" onclick="toggleMusicSidebar(false)">&times;</button>
+        
+        <div class="sidebar-content">
+            <h2 class="title-poesia">Sintonía Espacial</h2>
+            <p class="desc-poesia">Aquí podrás escuchar y montar músicas que desees... lo que tu desees... quisiera que pudieras realizar un catálogo personalizado a tu gusto.</p>
+            
+            <div class="player-card">
+                <div class="player-stars"></div>
+                <div class="player-info">
+                    <span class="player-label">TRANSMITIENDO:</span>
+                    <h3 id="current-song-title">Ninguna pista seleccionada</h3>
+                </div>
+                <div class="player-controls">
+                    <button onclick="prevSong()"><i class="fa-solid fa-backward-step"></i></button>
+                    <button id="player-play-btn" class="main-play" onclick="toggleMusic()"><i class="fa-solid fa-play"></i></button>
+                    <button onclick="nextSong()"><i class="fa-solid fa-forward-step"></i></button>
+                </div>
+            </div>
+
+            <button class="return-btn" style="margin-top: 15px;" onclick="toggleUploadForm(true)">
+                <i class="fa-solid fa-cloud-arrow-up"></i> Transmitir nueva pista
+            </button>
+
+            <div id="upload-section" style="display: none; margin-top: 15px; background: rgba(255,255,255,0.02); padding: 15px; border-radius: 8px; border: 1px dashed var(--yellow-primary);">
+                <input type="text" id="song-title-input" placeholder="Título de la canción" style="width:100%; padding:8px; background:#12121c; border:1px solid rgba(255,215,0,0.3); color:#fff; margin-bottom:10px; border-radius:4px;">
+                <input type="file" id="song-file-input" accept="audio/mpeg" style="width:100%; color:var(--text-muted); margin-bottom:15px;">
+                <button class="action-btn" style="display:block; width:100%; font-size:0.85rem;" onclick="uploadSong()">Subir a la órbita</button>
+            </div>
+            
+            <div id="music-cards-container" class="cards-grid" style="margin-top: 25px;">
+                <p class="loading-text">Sintonizando frecuencias...</p>
             </div>
         </div>
     </div>
