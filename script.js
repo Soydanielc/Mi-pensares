@@ -38,7 +38,7 @@ const paragraphs = [
     
     `Hubiera querido decírtelo antes, pero mi mente me saboteaba. De hecho, más de una vez escribí mensajes diciéndote lo que siento... y terminé borrándolos.`,
 
-    `Aun cuando los nervios me ganan, no quisiera perder la oportunidad de decírtelo. Lastimosamente, no suelo darte muchos halagos sobre tu belleza, pero me encantaría que supieras lo única, bella, hermosa y preciosa que eres. Eres alguien muy especial para mí. Me encanta cuando sonríes; me fascina escucharte. Tu canto desvía toda mi atención hacia tu voz, y tu forma de distraerte suele convertirse en mi momento favorito de admiración.`,
+    `Aun cuando los nervios me ganan, no quisiera perder la oportunidad de decírtelo. Lastimosamente, no suelo darte muchos halagos sobre tu belleza, pero me encantaría que supieras lo única, bella, hermosa y preciosa que eres. Eres alguien muy especial para mí. Me encanta cuando sonríes; me fascina escucharte. Tu canto desvía toda mi atención hacia tu voz, y tu forma de distraerte suele convertirse en mi momento favorito de admiración.`
 ];
 
 let currentParagraphIndex = 0;
@@ -47,6 +47,9 @@ const box = document.getElementById('message-box');
 const nextBtn = document.getElementById('next-trigger');
 let currentDiv = null;
 let poemasCargados = false;
+let playlist = [];
+let currentSongIndex = 0;
+let musicasCargadas = false;
 
 
 // Elementos globales de audio unificados
@@ -268,4 +271,186 @@ function openNotebook(titulo, contenido) {
 
 function closeNotebook() {
     document.getElementById('notebook-modal').style.display = 'none';
+}
+
+// Cargar la última canción guardada o el catálogo al iniciar la interfaz
+window.addEventListener('DOMContentLoaded', async () => {
+    // Intentar inicializar el catálogo musical de inmediato
+    await fetchMusicas();
+    
+    // Recuperar última canción reproducida del localStorage si existe
+    const savedSongUrl = localStorage.getItem('last_quantum_song_url');
+    const savedSongTitle = localStorage.getItem('last_quantum_song_title');
+    
+    if (savedSongUrl && playlist.length > 0) {
+        music.src = savedSongUrl;
+        document.getElementById('current-song-title').innerText = savedSongTitle;
+        // Sincronizar el index
+        const idx = playlist.findIndex(s => s.url === savedSongUrl);
+        if (idx !== -1) currentSongIndex = idx;
+    } else if (playlist.length > 0) {
+        // Por defecto, la más nueva (primera en la lista)
+        setSong(0, false);
+    } else {
+        // Respaldo por si la base de datos está vacía
+        music.src = './musica.mp3';
+        document.getElementById('current-song-title').innerText = "Archivo Local Original";
+    }
+});
+
+// Abrir/Cerrar Sidebar Musical
+function toggleMusicSidebar(open) {
+    const sidebar = document.getElementById('sidebar-musica');
+    if (open) {
+        sidebar.classList.add('active');
+        if (!musicasCargadas) fetchMusicas();
+    } else {
+        sidebar.classList.remove('active');
+    }
+}
+
+function toggleUploadForm(show) {
+    const form = document.getElementById('upload-section');
+    form.style.display = show ? 'block' : 'none';
+}
+
+// Traer Canciones desde Supabase (Nuevas primero)
+async function fetchMusicas() {
+    const container = document.getElementById('music-cards-container');
+    try {
+        const { data: musicas, error } = await supabaseclient
+            .from('musicas')
+            .select('*')
+            .order('creado_en', { ascending: false });
+
+        if (error) throw error;
+
+        if (!musicas || musicas.length === 0) {
+            container.innerHTML = '<p class="loading-text">No hay frecuencias en el catálogo.</p>';
+            return;
+        }
+
+        playlist = musicas; // Guardar en el array global
+        container.innerHTML = ''; 
+
+        musicas.forEach((musica, index) => {
+            const card = document.createElement('div');
+            card.classList.add('poem-card'); // Reutilizamos clase de estética limpia
+            
+            const h3 = document.createElement('h3');
+            h3.innerHTML = `<i class="fa-solid fa-music" style="color:var(--yellow-primary); margin-right:10px;"></i> ${musica.titulo}`;
+            card.appendChild(h3);
+
+            card.onclick = () => setSong(index, true);
+            container.appendChild(card);
+        });
+
+        musicasCargadas = true;
+    } catch (error) {
+        console.error('Error sintonizando catálogo:', error);
+        container.innerHTML = '<p class="loading-text">Error de enlace en red musical.</p>';
+    }
+}
+
+// Cambiar de canción activamente
+function setSong(index, autoPlay = true) {
+    if (index < 0 || index >= playlist.length) return;
+    currentSongIndex = index;
+    
+    const song = playlist[currentSongIndex];
+    music.src = song.url;
+    document.getElementById('current-song-title').innerText = song.titulo;
+    
+    // Persistencia: Guardar la elección para cuando se recargue la página
+    localStorage.setItem('last_quantum_song_url', song.url);
+    localStorage.setItem('last_quantum_song_title', song.titulo);
+
+    if (autoPlay) {
+        music.play();
+        updatePlayerUI(true);
+    }
+}
+
+// Controles del reproductor integrado
+function nextSong() {
+    let nextIdx = currentSongIndex + 1;
+    if (nextIdx >= playlist.length) nextIdx = 0; // Bucle
+    setSong(nextIdx, !music.paused);
+}
+
+function prevSong() {
+    let prevIdx = currentSongIndex - 1;
+    if (prevIdx < 0) prevIdx = playlist.length - 1;
+    setSong(prevIdx, !music.paused);
+}
+
+// Sobreescribir o acoplar a tu función toggleMusic vieja para actualizar íconos del reproductor nuevo
+const originalToggleMusic = toggleMusic;
+toggleMusic = function() {
+    originalToggleMusic();
+    updatePlayerUI(!music.paused);
+}
+
+function updatePlayerUI(isPlaying) {
+    const playBtn = document.getElementById('player-play-btn');
+    if (isPlaying) {
+        playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+    } else {
+        playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+    }
+}
+
+// Subir canción a Supabase Storage y registrarla en la base de datos
+async function uploadSong() {
+    const titleInput = document.getElementById('song-title-input');
+    const fileInput = document.getElementById('song-file-input');
+    
+    const titulo = titleInput.value.trim();
+    const file = fileInput.files[0];
+
+    if (!titulo || !file) {
+        alert("Por favor, introduce un título y selecciona un archivo de audio.");
+        return;
+    }
+
+    try {
+        // 1. Crear nombre único para el archivo en el storage
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Date.now()}.${fileExt}`;
+        const filePath = `public/${fileName}`;
+
+        // 2. Subir el archivo binario al Bucket
+        let { error: uploadError } = await supabaseclient.storage
+            .from('canciones')
+            .upload(filePath, file);
+
+        if (uploadError) throw uploadError;
+
+        // 3. Obtener la URL pública del archivo subido
+        const { data } = supabaseclient.storage
+            .from('canciones')
+            .getPublicUrl(filePath);
+
+        const publicUrl = data.publicUrl;
+
+        // 4. Guardar registro en la tabla de música
+        const { error: insertError } = await supabaseclient
+            .from('musicas')
+            .insert([{ titulo: titulo, url: publicUrl }]);
+
+        if (insertError) throw insertError;
+
+        // Resetear formulario y recargar lista
+        titleInput.value = '';
+        fileInput.value = '';
+        toggleUploadForm(false);
+        alert("¡Pista enviada a la constelación con éxito!");
+        
+        await fetchMusicas(); // Recarga el catálogo
+        setSong(0, true);    // Reproduce la recién subida automáticamente
+        
+    } catch (error) {
+        console.error("Error en la subida cuántica:", error);
+        alert("Hubo un error al procesar el archivo de audio.");
+    }
 }
