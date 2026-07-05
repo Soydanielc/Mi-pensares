@@ -39,7 +39,6 @@ const paragraphs = [
     `Hubiera querido decírtelo antes, pero mi mente me saboteaba. De hecho, más de una vez escribí mensajes diciéndote lo que siento... y terminé borrándolos.`,
 
     `Aun cuando los nervios me ganan, no quisiera perder la oportunidad de decírtelo. Lastimosamente, no suelo darte muchos halagos sobre tu belleza, pero me encantaría que supieras lo única, bella, hermosa y preciosa que eres. Eres alguien muy especial para mí. Me encanta cuando sonríes; me fascina escucharte. Tu canto desvía toda mi atención hacia tu voz, y tu forma de distraerte suele convertirse en mi momento favorito de admiración.`,
-    `Deseo que conozcas este sentimiento. No quisiera que todo terminara sin haberlo intentado. No sé si sea lo correcto o lo mejor; suelo sabotearme y pensar que tal vez debería dejar de lado mis sentimientos para enfocarme en mejorar. Pero sé que podría arrepentirme en el futuro si no lo intento, al menos, una vez más.`
 ];
 
 let currentParagraphIndex = 0;
