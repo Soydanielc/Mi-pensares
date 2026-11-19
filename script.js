@@ -31,8 +31,10 @@ function buildSpace() {
 }
 // Array de párrafos ordenados para la paginación interactiva
 const paragraphs = [
-    `Hace meses pense en entregarte esto, tuve un intento, uno que sinceramente no se como termino, ahora, sin conocer tal cosa quisiera auque sea no quedarme yo solo con esto que he decidido que te pertenece.`
     `En la luna y el sol se encuentran la belleza y el poder de Dios y, aun así, al mirar tu reflejo puedo ver su mejor creación.`,
+
+    `Hace meses pense en entregarte esto, tuve un intento, uno que sinceramente no se como termino, ahora, sin conocer tal cosa quisiera auque sea no quedarme yo solo con esto que he decidido que te pertenece.`
+
     `Me gustas... o tal vez podría decir que me encantas.`,
     
     `He tratado de decírtelo, aunque los nervios me ganan; mi mente se nubla al estar cerca de ti. Sinceramente, el simple hecho de estar a solas contigo es suficiente para no pensar en nada más.`,
