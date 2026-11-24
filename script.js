@@ -33,7 +33,7 @@ function buildSpace() {
 const paragraphs = [
     `En la luna y el sol se encuentran la belleza y el poder de Dios y, aun así, al mirar tu reflejo puedo ver su mejor creación.`,
 
-    `Hace meses pense en entregarte esto, tuve un intento, uno que sinceramente no se como termino, ahora, sin conocer tal cosa quisiera auque sea no quedarme yo solo con esto que he decidido que te pertenece.`
+    `Hace meses pense en entregarte esto, tuve un intento, uno que sinceramente no se como termino, ahora, sin conocer tal cosa quisiera auque sea no quedarme yo solo con esto que he decidido que te pertenece.`,
 
     `Me gustas... o tal vez podría decir que me encantas.`,
     
