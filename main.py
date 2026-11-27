@@ -32,8 +32,13 @@ app.add_middleware(
     allow_credentials=True,
     allow_headers=["*"],
     allow_origins=["*"],
-    allow_methods=["GET", "POST", "PUT", "DELETE"],
+    allow_methods=["GET", "PUT", "DELETE", "POST"],
 )
+
+
+@app.get("/")
+async def bienvenida():
+    return {"mensaje": "BIenvenido ususario"}
 
 
 @app.get("/poemas")
