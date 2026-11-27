@@ -27,6 +27,10 @@ class musicasEntrantes(BaseModel):
     creado_en: str
 
 
+class respuestasEntrantes(BaseModel):
+    respuesta: str
+
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
@@ -85,3 +89,16 @@ async def RegMusica(musica: musicasEntrantes):
         return {"data": response.data}
     except Exception as e:
         raise HTTPException(status_code=(500), detail=str(e))
+
+
+@app.post("/respuesta")
+async def recibiendo_mensajes(mensaje: respuestasEntrantes):
+    datos = {"respuesta": mensaje.respuesta}
+    try:
+        response = mi_cliente.table("respuestas").insert(datos).execute()
+        return {
+            "mensaje": "Tu respuesta fue recibida exitosamentes",
+            "data": response.data,
+        }
+    except Exception as e:
+        raise HTTPException(status_code=(500), detail=(e))
